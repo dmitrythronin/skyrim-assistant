@@ -1,7 +1,7 @@
 import os
-
 import xlsx
 import discord
+import aiohttp
 
 from dotenv import load_dotenv
 from discord.ext import commands
@@ -28,10 +28,8 @@ async def on_ready():
 
 def search_in_table(table, message):
     try:
-        # Выполнение поиска
         return xlsx.search_table(table, message)
     except Exception as e:
-        # Обработка ошибок
         return "К сожалению, при обработке значения ячейки произошла ошибка"
 
 
@@ -53,6 +51,19 @@ async def rfad(interaction: discord.Interaction, message: str):
     await interaction.response.send_message(result)
 
 
-load_dotenv()
-token = os.getenv("TOKEN")
-bot.run(token)
+async def start_bot():
+    load_dotenv()
+    token = os.getenv("TOKEN")
+    proxy_url = os.getenv("PROXY_URL")
+
+    async with aiohttp.ClientSession() as session:
+        async with session.get("https://discord.com", proxy=proxy_url) as response:
+            if response.status == 200:
+                print("Прокси успешно подключен.")
+            await bot.start(token)
+
+
+# Запуск бота через прокси
+import asyncio
+
+asyncio.run(start_bot())
