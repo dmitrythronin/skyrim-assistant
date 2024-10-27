@@ -2,6 +2,7 @@ import os
 import xlsx
 import discord
 import aiohttp
+import asyncio
 
 from dotenv import load_dotenv
 from discord.ext import commands
@@ -57,13 +58,18 @@ async def start_bot():
     proxy_url = os.getenv("PROXY_URL")
 
     async with aiohttp.ClientSession() as session:
-        async with session.get("https://discord.com", proxy=proxy_url) as response:
-            if response.status == 200:
-                print("Прокси успешно подключен.")
-            await bot.start(token)
+        if proxy_url:
+            async with session.get("https://discord.com", proxy=proxy_url) as response:
+                if response.status == 200:
+                    print("Прокси успешно подключен.")
+        else:
+            async with session.get("https://discord.com") as response:
+                if response.status == 200:
+                    print("Подключение без прокси успешно.")
+
+        print("Запуск бота...")
+        await bot.start(token)
 
 
 # Запуск бота через прокси
-import asyncio
-
 asyncio.run(start_bot())
