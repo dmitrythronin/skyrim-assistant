@@ -3,7 +3,7 @@ import xlsx
 import discord
 import aiohttp
 import asyncio
-
+from aiohttp_socks import ProxyConnector
 from dotenv import load_dotenv
 from discord.ext import commands
 
@@ -41,7 +41,7 @@ async def reflyem(interaction: discord.Interaction, message: str):
 
 
 @bot.tree.command(name="refl", description="Поиск по базе Reflyem (в разработке)")
-async def reflyem(interaction: discord.Interaction, message: str):
+async def refl(interaction: discord.Interaction, message: str):
     result = search_in_table(xlsx.REFLYEM_TABLE, message)
     await interaction.response.send_message(result)
 
@@ -57,9 +57,14 @@ async def start_bot():
     token = os.getenv("TOKEN")
     proxy_url = os.getenv("PROXY_URL")
 
-    async with aiohttp.ClientSession() as session:
+    connector = None
+    if proxy_url:
+        # Указываем тип прокси как SOCKS5
+        connector = ProxyConnector.from_url(proxy_url)
+
+    async with aiohttp.ClientSession(connector=connector) as session:
         if proxy_url:
-            async with session.get("https://discord.com", proxy=proxy_url) as response:
+            async with session.get("https://discord.com") as response:
                 if response.status == 200:
                     print("Прокси успешно подключен.")
         else:
