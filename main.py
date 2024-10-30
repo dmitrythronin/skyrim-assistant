@@ -1,9 +1,6 @@
 import os
 import xlsx
 import discord
-import aiohttp
-import asyncio
-from aiohttp_socks import ProxyConnector
 from dotenv import load_dotenv
 from discord.ext import commands
 
@@ -52,29 +49,14 @@ async def rfad(interaction: discord.Interaction, message: str):
     await interaction.response.send_message(result)
 
 
-async def start_bot():
+def start_bot():
     load_dotenv()
     token = os.getenv("TOKEN")
     proxy_url = os.getenv("PROXY_URL")
-
-    connector = None
-    if proxy_url:
-        # Указываем тип прокси как SOCKS5
-        connector = ProxyConnector.from_url(proxy_url)
-
-    async with aiohttp.ClientSession(connector=connector) as session:
-        if proxy_url:
-            async with session.get("https://discord.com") as response:
-                if response.status == 200:
-                    print("Прокси успешно подключен.")
-        else:
-            async with session.get("https://discord.com") as response:
-                if response.status == 200:
-                    print("Подключение без прокси успешно.")
-
-        print("Запуск бота...")
-        await bot.start(token)
+    print("Запуск бота...")
+    client = discord.Client(proxy=proxy_url, intents=discord.Intents.all())
+    client.run(token)
 
 
 # Запуск бота через прокси
-asyncio.run(start_bot())
+start_bot()
