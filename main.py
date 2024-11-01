@@ -35,20 +35,16 @@ def search_in_table(table, message):
 
 @bot.tree.command(name="reflyem", description="Поиск по базе Reflyem (в разработке)")
 async def reflyem(interaction: discord.Interaction, message: str):
+    await interaction.response.defer()  # Отправляем временный ответ
     result = search_in_table(xlsx.REFLYEM_TABLE, message)
-    await interaction.response.send_message(result)
-
-
-@bot.tree.command(name="refl", description="Поиск по базе Reflyem (в разработке)")
-async def reflyem(interaction: discord.Interaction, message: str):
-    result = search_in_table(xlsx.REFLYEM_TABLE, message)
-    await interaction.response.send_message(result)
+    await interaction.followup.send(result)
 
 
 @bot.tree.command(name="rfad", description="Поиск по базе RfaD (в разработке)")
 async def rfad(interaction: discord.Interaction, message: str):
+    await interaction.response.defer()  # Отправляем временный ответ
     result = search_in_table(xlsx.RFAD_TABLE, message)
-    await interaction.response.send_message(result)
+    await interaction.followup.send(result)
 
 
 load_dotenv()
