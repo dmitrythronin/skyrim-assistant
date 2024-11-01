@@ -1,6 +1,8 @@
 import os
+
 import xlsx
 import discord
+
 from dotenv import load_dotenv
 from discord.ext import commands
 
@@ -38,7 +40,7 @@ async def reflyem(interaction: discord.Interaction, message: str):
 
 
 @bot.tree.command(name="refl", description="Поиск по базе Reflyem (в разработке)")
-async def refl(interaction: discord.Interaction, message: str):
+async def reflyem(interaction: discord.Interaction, message: str):
     result = search_in_table(xlsx.REFLYEM_TABLE, message)
     await interaction.response.send_message(result)
 
@@ -49,14 +51,6 @@ async def rfad(interaction: discord.Interaction, message: str):
     await interaction.response.send_message(result)
 
 
-def start_bot():
-    load_dotenv()
-    token = os.getenv("TOKEN")
-    proxy_url = os.getenv("PROXY_URL")
-    print("Запуск бота...")
-    client = discord.Client(proxy=proxy_url, intents=discord.Intents.all())
-    client.run(token)
-
-
-# Запуск бота через прокси
-start_bot()
+load_dotenv()
+token = os.getenv("TOKEN")
+bot.run(token, reconnect=True)
